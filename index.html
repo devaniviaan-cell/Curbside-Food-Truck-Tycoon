@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Curbside: Food Truck Tycoon</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Karla:wght@400;700&display=swap">
+<style>
+:root{--bg:#f7edd6;--card:#fffaf0;--ink:#26343c;--mute:#6b766f;--teal:#1f7a80;--gold:#f2b632;--chili:#d6452f;--line:#e2d5b4;--good:#2b8a4b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15252b;--card:#1d3239;--ink:#f2ead6;--mute:#9fb0aa;--teal:#4cb8be;--gold:#f2b632;--chili:#ff7a63;--line:#2e4952;--good:#6fd08c}}
+:root[data-theme="dark"]{--bg:#15252b;--card:#1d3239;--ink:#f2ead6;--mute:#9fb0aa;--teal:#4cb8be;--gold:#f2b632;--chili:#ff7a63;--line:#2e4952;--good:#6fd08c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 Karla,Verdana,sans-serif}
+h1,h2{font-family:'Bowlby One','Arial Black',Impact,sans-serif;font-weight:400;margin:0;letter-spacing:.01em}
+main{max-width:980px;margin:0 auto;padding:16px}
+header{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+header svg{width:150px;flex:none}
+h1{font-size:clamp(28px,6vw,44px);line-height:1;color:var(--teal)}
+.sub{color:var(--mute);margin:4px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 10px}
+.stat b{display:block;font-size:22px}
+.stat span{color:var(--mute);font-size:13px}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+section{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+h2{font-size:19px;margin-bottom:10px;color:var(--chili)}
+.locs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.loc{text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 10px}
+.loc small{display:block;color:var(--mute)}
+.loc[aria-pressed=true]{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 14%,var(--card))}
+.row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.row:first-of-type{border-top:0}
+.row small{color:var(--mute);display:block}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:32px;height:32px;border-radius:8px;border:2px solid var(--line);background:var(--bg);font-weight:700}
+.step output{min-width:46px;text-align:center;font-weight:700}
+.lbl{font-size:12px;color:var(--mute);text-align:center}
+.go{width:100%;padding:14px;border:0;border-radius:12px;background:var(--chili);color:#fff;font:400 20px 'Bowlby One','Arial Black',sans-serif}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.up{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.up:first-of-type{border-top:0}
+.up small{color:var(--mute);display:block}
+.buy{border:2px solid var(--teal);background:transparent;color:var(--teal);border-radius:8px;padding:6px 10px;font-weight:700;white-space:nowrap}
+.buy:disabled{opacity:.4;cursor:not-allowed}
+.receipt{background:#fffdf5;color:#26343c;font-family:'Courier New',monospace;font-size:14px;padding:14px;border-radius:4px;box-shadow:0 3px 0 var(--line);border-top:8px dotted var(--gold)}
+.receipt p{margin:0;display:flex;justify-content:space-between}
+.receipt hr{border:0;border-top:1px dashed #b9a97c;margin:8px 0}
+.receipt .t{font-weight:700;font-size:16px}
+.pos{color:#2b8a4b}.neg{color:#c23a25}
+.note{color:var(--mute);font-size:14px;margin:8px 0 0}
+.low{border-color:var(--chili)}.low .note{margin:0 0 10px;color:var(--ink)}
+#scene{border:3px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:14px;box-shadow:0 5px 0 var(--line)}
+#scene svg{display:block;width:100%;height:auto}
+.ic{font-size:26px;margin-right:8px;vertical-align:middle}
+section,.stat{box-shadow:0 4px 0 var(--line)}
+.loc,.buy,.step button{transition:transform .12s}
+.loc:hover,.buy:not(:disabled):hover{transform:translateY(-2px)}
+button:active:not(:disabled){transform:translateY(2px)}
+.go{box-shadow:0 5px 0 #9c2d1d;transition:transform .12s}
+.go:not(:disabled):hover{transform:translateY(-2px)}
+.stat b{color:var(--teal)}
+@keyframes arrive{from{transform:translateX(-380px)}to{transform:none}}.arrive{animation:arrive 1.1s cubic-bezier(.2,.8,.3,1)}
+@keyframes rn{from{transform:translateY(-20px)}to{transform:translateY(220px)}}.rn{stroke:#e6f0f7;stroke-width:2;animation:rn .8s linear infinite}
+@keyframes drift{50%{transform:translateX(18px)}}.cloud{animation:drift 9s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}.sun{transform-box:fill-box;transform-origin:center;animation:pulse 3s ease-in-out infinite}
+@keyframes st{from{transform:translateY(0);opacity:.85}to{transform:translateY(-24px);opacity:0}}.st{fill:#fff;animation:st 2s ease-out infinite}
+@keyframes hop{50%{transform:translateY(-3px)}}.cu{animation:hop 1.4s ease-in-out infinite}
+@keyframes wv{to{transform:translateX(50px)}}.wv{animation:wv 2.5s linear infinite}
+@keyframes pop{0%{transform:translateY(20px);opacity:0}20%{opacity:1}100%{transform:translateY(-34px);opacity:0}}
+.pop{font:400 28px 'Bowlby One','Arial Black',sans-serif;fill:#ffd23f;stroke:#26343c;stroke-width:6px;paint-order:stroke;animation:pop 2.4s ease-out forwards}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.end{text-align:center}.end h2{font-size:26px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div><h1>Curbside</h1><p class="sub">Grow your food truck. Reach $3,000 by day 30.</p></div>
+</header>
+<div id="scene"></div>
+<div class="stats" id="stats"></div>
+<div id="app"></div>
+</main>
+<script>
+const ITEMS=[{e:'🌮',n:'Street tacos',c:1.5,b:5},{e:'🍔',n:'Smash burgers',c:2.5,b:8},{e:'🍜',n:'Noodle bowls',c:2,b:7},{e:'🍋',n:'Lemonade',c:.4,b:3}];
+const LOCS=[
+{e:'🏢',n:'Office park',fee:0,tr:45,pop:[.3,.3,.3,.1],d:'Steady lunch crowd'},
+{e:'🎓',n:'University',fee:20,tr:60,pop:[.35,.3,.25,.1],d:'Hungry students'},
+{e:'🏖️',n:'Beach',fee:40,tr:80,pop:[.2,.2,.15,.45],d:'Thirsty in the sun'},
+{e:'🏟️',n:'Stadium',fee:120,tr:130,pop:[.25,.4,.15,.2],d:'Huge crowds, need capacity'}];
+const UPS=[
+{e:'🔥',k:'grill',n:'Bigger grill',d:'+15 servings per day',c:300},
+{e:'🪧',k:'sign',n:'Bright sign',d:'+15% foot traffic',c:250},
+{e:'🧊',k:'fridge',n:'Cold storage',d:'Keeps 30% of leftovers per level',c:200},
+{e:'🧑‍🍳',k:'help',n:'Hire a helper',d:'+20 servings, $20 wage per day',c:400}];
+const MAXUP=3;
+const WX=[{n:'Sunny',t:1.1,l:1.4},{n:'Cloudy',t:1,l:.8},{n:'Rainy',t:.6,l:.5},{n:'Heatwave',t:1,l:2.2}];
+const $=s=>document.querySelector(s);
+const m=x=>'$'+Math.round(x).toLocaleString();
+let S;
+function fresh(){S={wx:'Sunny',arrive:false,day:1,cash:200,rep:20,up:{grill:0,sign:0,fridge:0,help:0},loc:0,price:ITEMS.map(i=>i.b),prep:[0,0,0,0],left:[0,0,0,0],report:null,over:null}}
+const cap=()=>40+15*S.up.grill+20*S.up.help;
+const upCost=u=>Math.round(u.c*Math.pow(1.6,S.up[u.k]));
+const outlay=()=>S.prep.reduce((a,q,i)=>a+q*ITEMS[i].c,0)+LOCS[S.loc].fee+20*S.up.help;
+const W=(x,y,c,r)=>{let o='';for(let i=0;i<c;i++)for(let j=0;j<r;j++)o+=`<rect x="${x+i*16}" y="${y+j*20}" width="9" height="11"/>`;return o};
+function scene(){
+ const wx=S.wx,sk={Sunny:['#7ecbee','#eaf7fb'],Cloudy:['#a9b8c2','#e3e9ed'],Rainy:['#6f808c','#b4c0c8'],Heatwave:['#ffb257','#ffe9b8']}[wx];
+ const BD=[
+ `<g fill="#5f7d95"><rect x="30" y="80" width="80" height="72"/><rect x="118" y="36" width="70" height="116"/><rect x="420" y="56" width="90" height="96"/><rect x="518" y="90" width="64" height="62"/></g><g fill="#ffe08a" opacity=".9">${W(42,90,4,3)}${W(130,48,3,5)}${W(432,66,5,4)}${W(530,100,3,3)}</g>`,
+ `<polygon points="50,84 160,40 270,84" fill="#8c4a37"/><rect x="60" y="84" width="200" height="68" fill="#c47a5a"/><g fill="#f4e6c8">${W(72,94,4,1)}${W(184,94,4,1)}</g><rect x="140" y="108" width="40" height="44" fill="#5a3a2e"/><circle cx="160" cy="68" r="8" fill="#f4e6c8"/><circle cx="470" cy="120" r="34" fill="#4c9a5a"/><rect x="466" y="140" width="8" height="14" fill="#6b4a32"/><circle cx="535" cy="128" r="26" fill="#5cab68"/>`,
+ `<rect y="98" width="600" height="56" fill="#2a9bc4"/><path class="wv" d="M-50 112q25-8 50 0${'t50 0'.repeat(13)}" fill="none" stroke="#bfe8f5" stroke-width="3"/><path d="M500 152q-8-50 6-84" stroke="#7a5a3a" stroke-width="7" fill="none"/><g fill="#3f9a4d"><ellipse cx="490" cy="70" rx="30" ry="9" transform="rotate(-20 490 70)"/><ellipse cx="524" cy="68" rx="30" ry="9" transform="rotate(20 524 68)"/><ellipse cx="507" cy="60" rx="24" ry="8"/></g>`,
+ `<path d="M10 154Q300 -20 590 154Z" fill="#9aa4b0"/><path d="M60 154Q300 22 540 154Z" fill="#717b88"/><path d="M41 42V152M559 42V152" stroke="#4a525c" stroke-width="4"/><g fill="#ffe08a"><rect x="28" y="30" width="26" height="12"/><rect x="546" y="30" width="26" height="12"/></g><rect x="290" y="34" width="20" height="12" fill="#d6452f"/>`][S.loc];
+ let g=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk[0]}"/><stop offset="1" stop-color="${sk[1]}"/></linearGradient></defs><rect width="600" height="200" fill="url(#sk)"/>`;
+ if(wx=='Sunny'||wx=='Heatwave')g+=`<g class="sun"><circle cx="540" cy="44" r="${wx=='Heatwave'?36:24}" fill="#ffd23f"/></g>`;
+ else g+='<g class="cloud" fill="#fff" opacity=".92"><ellipse cx="110" cy="40" rx="34" ry="13"/><ellipse cx="135" cy="32" rx="24" ry="13"/><ellipse cx="400" cy="28" rx="36" ry="12"/><ellipse cx="425" cy="22" rx="22" ry="11"/></g>';
+ g+=BD+`<rect y="150" width="600" height="50" fill="${['#59636d','#666c74','#e9d29a','#59636d'][S.loc]}"/>`;
+ if(S.loc!=2)g+='<path d="M0 190H600" stroke="#fff" stroke-width="3" stroke-dasharray="26 18" opacity=".6"/>';
+ if(wx=='Rainy')g+=[...Array(16)].map((_,i)=>`<line class="rn" x1="${20+i*38}" y1="0" x2="${14+i*38}" y2="12" style="animation-delay:${(i%5)*.16}s"/>`).join('');
+ const q=S.report?Math.min(8,Math.ceil(S.report.ns/6)):2,cols=['#d6452f','#f2b632','#7a5ac8','#2b8a4b','#e07aa0'],sn=['#f2c9a0','#c98f62','#8a5a3a'];
+ let cu='';for(let i=0;i<q;i++){const x=238-i*26;cu+=`<g class="cu" style="animation-delay:${(i*.17).toFixed(2)}s"><circle cx="${x}" cy="152" r="7" fill="${sn[i%3]}"/><rect x="${x-7}" y="159" width="14" height="22" rx="6" fill="${cols[i%5]}"/></g>`}
+ const A=S.arrive;S.arrive=false;
+ g+=`<g transform="translate(250 66) scale(1.1)"><g class="${A?'arrive':''}"><ellipse cx="80" cy="90" rx="78" ry="5" fill="#000" opacity=".2"/><circle class="st" cx="20" cy="18" r="4"/><circle class="st" style="animation-delay:.7s" cx="26" cy="15" r="3"/><circle class="st" style="animation-delay:1.3s" cx="14" cy="15" r="3"/><rect x="6" y="22" width="104" height="52" rx="8" fill="#1f7a80"/><path d="M110 36h26l16 20v18H110z" fill="#1f7a80"/><path d="M118 42h16l10 14h-26z" fill="#cfe9ea"/><circle cx="150" cy="64" r="3" fill="#ffe08a"/><rect x="20" y="34" width="66" height="26" rx="3" fill="#fffaf0"/><text x="53" y="55" font-size="20" text-anchor="middle">${ITEMS[S.day%4].e}</text><path d="M14 34h78l-6-12H20z" fill="#f2b632"/><path d="M26 22l-6 12h12l4-12zM50 22l-2 12h12l-2-12zM74 22l-2 12h12l-2-12z" fill="#d6452f"/><rect x="30" y="6" width="52" height="15" rx="3" fill="#d6452f"/><text x="56" y="17" font-size="9" text-anchor="middle" fill="#fff" font-family="Bowlby One,Arial Black,sans-serif">CURBSIDE</text><rect x="6" y="66" width="146" height="8" fill="#26343c"/><circle cx="36" cy="76" r="12" fill="#26343c"/><circle cx="36" cy="76" r="5" fill="#f7edd6"/><circle cx="126" cy="76" r="12" fill="#26343c"/><circle cx="126" cy="76" r="5" fill="#f7edd6"/></g></g>`+cu;
+ if(A&&S.report)g+=`<text class="pop" x="330" y="64" text-anchor="middle">+${m(S.report.rev)}</text>`;
+ return `<svg viewBox="0 0 600 200" role="img" aria-label="${LOCS[S.loc].n}, ${wx} weather">${g}</svg>`;
+}
+function render(){
+ $('#scene').innerHTML=scene();
+ $('#stats').innerHTML=[['Day',S.day+' / 30','📅'],['Cash',m(S.cash),'💰'],['Reputation',S.rep+' / 100','⭐'],['Truck capacity',cap()+' a day','🚚']].map(s=>`<div class="stat"><b>${s[1]}</b><span>${s[2]} ${s[0]}</span></div>`).join('');
+ if(S.over){$('#app').innerHTML=`<section class="end"><h2>${S.over.t}</h2><p>${S.over.m}</p><button class="go" data-a="restart">Play again</button></section>`;return}
+ const stock=i=>S.left[i]+S.prep[i], can=outlay()<=S.cash, any=S.prep.some(q=>q>0)||S.left.some(q=>q>0);
+ let h=S.cash<20?`<section class="low"><h2>Cash is running low</h2><p class="note">You have ${m(S.cash)}. Cook a small batch at the office park, or take a day gig to get back on your feet. A gig pays $35 but uses up the day.</p><button class="buy" data-a="gig">Wash dishes for the day (+$35)</button></section>`:'';
+ h+='<div class="grid"><div>';
+ h+='<section><h2>1. Pick a spot</h2><div class="locs">'+LOCS.map((l,i)=>`<button class="loc" data-a="loc" data-i="${i}" aria-pressed="${S.loc==i}"><b>${l.e} ${l.n}</b><small>${l.d}</small><small>Permit ${m(l.fee)}</small></button>`).join('')+'</div></section>';
+ h+='<section><h2>2. Set prices and prep food</h2><div class="row"><span></span><span class="lbl">Price</span><span class="lbl">Servings to cook</span></div>';
+ h+=ITEMS.map((it,i)=>`<div class="row"><div><b><span class="ic">${it.e}</span>${it.n}</b><small>Costs ${'$'+it.c.toFixed(2)} each${S.left[i]?' · '+S.left[i]+' in the fridge':''}</small></div>
+ <div class="step"><button data-a="pd" data-i="${i}" aria-label="Lower price of ${it.n}">−</button><output>${'$'+S.price[i].toFixed(2)}</output><button data-a="pu" data-i="${i}" aria-label="Raise price of ${it.n}">+</button></div>
+ <div class="step"><button data-a="qd" data-i="${i}" aria-label="Cook fewer ${it.n}">−</button><output>${S.prep[i]}</output><button data-a="qu" data-i="${i}" aria-label="Cook more ${it.n}">+</button></div></div>`).join('');
+ const tot=S.prep.reduce((a,q,i)=>a+q+S.left[i],0);
+ h+=`<p class="note">Total stock ${tot} · truck serves up to ${cap()}. Food and permit cost ${m(outlay())} today.${can?'':' <b class="neg">You need more cash. Cook less or pick a cheaper spot.</b>'}</p></section>`;
+ h+=`<button class="go" data-a="run" ${can&&any?'':'disabled'}>Open for business</button></div><div>`;
+ h+='<section><h2>Upgrades</h2>'+UPS.map(u=>{const lv=S.up[u.k],max=lv>=MAXUP,c=upCost(u);return `<div class="up"><div><b>${u.e} ${u.n} (${lv}/${MAXUP})</b><small>${u.d}</small></div><button class="buy" data-a="buy" data-k="${u.k}" ${max||S.cash<c?'disabled':''}>${max?'Maxed':m(c)}</button></div>`}).join('')+'</section>';
+ if(S.report){const r=S.report;h+=`<section><h2>Day ${r.day} receipt</h2><div class="receipt"><p><span>Weather</span><span>${r.wx}</span></p><p><span>Spot</span><span>${r.loc}</span></p><hr>${r.lines.map(l=>`<p><span>${l[0]}</span><span>${l[1]}</span></p>`).join('')}<hr><p><span>Sales</span><span>${m(r.rev)}</span></p><p><span>Costs</span><span>−${m(r.cost)}</span></p><p class="t"><span>Profit</span><span class="${r.rev-r.cost>=0?'pos':'neg'}">${r.rev-r.cost>=0?'+':'−'}${m(Math.abs(r.rev-r.cost))}</span></p><hr><p><span>Turned away</span><span>${r.lost}</span></p><p><span>Spoiled</span><span>${r.spoil}</span></p></div></section>`}
+ else h+=`<section><h2>Day ${S.day}</h2><p class="note">${S.msg||'Pick a spot, cook some food, and open up. Prices near the default sell best. Push them up for margin, or down for a crowd.'}</p></section>`;
+ h+='</div></div>';
+ $('#app').innerHTML=h;
+}
+function run(){
+ const L=LOCS[S.loc],wx=WX[Math.floor(Math.random()*WX.length)];
+ const cost=outlay();S.cash-=cost;
+ const tr=L.tr*(1+.15*S.up.sign)*(.6+S.rep/125)*wx.t*(.85+Math.random()*.3);
+ const stock=S.prep.map((q,i)=>q+S.left[i]);
+ const dem=ITEMS.map((it,i)=>{const pf=Math.max(0,1-(S.price[i]/it.b-1)*1.1);return Math.round(tr*L.pop[i]*(i==3?wx.l:1)*pf)});
+ const D=dem.reduce((a,b)=>a+b,0),k=D>cap()?cap()/D:1;
+ const sold=dem.map((d,i)=>Math.min(stock[i],Math.round(d*k)));
+ const rev=sold.reduce((a,q,i)=>a+q*S.price[i],0),ns=sold.reduce((a,b)=>a+b,0);
+ const lost=Math.max(0,D-ns);
+ const rest=stock.map((q,i)=>q-sold[i]),keep=Math.min(.9,.3*S.up.fridge);
+ S.left=rest.map(q=>Math.floor(q*keep));
+ const spoil=rest.reduce((a,b)=>a+b,0)-S.left.reduce((a,b)=>a+b,0);
+ const ratio=D?ns/D:1;
+ S.rep=Math.max(0,Math.min(100,S.rep+(ratio>=.9?2:ratio>=.7?0:-2)+(S.price.every((p,i)=>p<=ITEMS[i].b*1.15)?1:0)));
+ S.cash+=rev;
+ S.wx=wx.n;S.arrive=true;S.report={ns,day:S.day,wx:wx.n,loc:L.n,rev,cost,lost,spoil,lines:ITEMS.map((it,i)=>[it.n+' x'+sold[i],m(sold[i]*S.price[i])])};
+ S.prep=[0,0,0,0];S.day++;
+ S.msg='';endCheck();
+}
+function endCheck(){
+ if(S.day>30)S.over=S.cash>=3000?{t:'You made it!',m:'You finished with '+m(S.cash)+' and a reputation of '+S.rep+'. Your truck is the talk of the town.'}:{t:'Season over',m:'You finished with '+m(S.cash)+', short of the $3,000 goal. Try bigger spots and upgrades earlier.'};
+}
+function gig(){
+ S.cash+=35;S.report=null;S.msg='You washed dishes at a diner and earned $35. Day '+S.day+' is over.';S.day++;endCheck();
+}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ const a=b.dataset.a,i=+b.dataset.i;
+ if(a=='loc')S.loc=i;
+ else if(a=='pd')S.price[i]=Math.max(.5,+(S.price[i]-.25).toFixed(2));
+ else if(a=='pu')S.price[i]=+(S.price[i]+.25).toFixed(2);
+ else if(a=='qd')S.prep[i]=Math.max(0,S.prep[i]-5);
+ else if(a=='qu')S.prep[i]+=5;
+ else if(a=='buy'){const u=UPS.find(x=>x.k==b.dataset.k),c=upCost(u);if(S.cash>=c&&S.up[u.k]<MAXUP){S.cash-=c;S.up[u.k]++}}
+ else if(a=='run')run();
+ else if(a=='gig')gig();
+ else if(a=='restart')fresh();
+ render();
+});
+fresh();render();
+</script>
+</body>
+</html>
